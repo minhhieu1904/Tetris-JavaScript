@@ -5,7 +5,7 @@ const scoreElement = document.getElementById('score')
 const ROW = 20
 const COL = (COLUMN = 10)
 const SQ = (squareSize = 20)
-const VACANT = 'WHITE' // color of an empty square
+const VACANT = '#49361E' // color of an empty square
 const delay = 1000
 
 // draw a square
@@ -13,7 +13,7 @@ function drawSquare (x, y, color) {
   ctx.fillStyle = color
   ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
 
-  ctx.strokeStyle = 'BLACK'
+  ctx.strokeStyle = '#3A2A17';
   ctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
 }
 
@@ -45,13 +45,13 @@ drawBoard()
 // the pieces and their colors
 
 const PIECES = [
-  [Z, 'red'],
-  [S, 'green'],
-  [T, 'yellow'],
-  [O, 'blue'],
-  [L, 'purple'],
-  [I, 'cyan'],
-  [J, 'orange']
+  [Z, '#01B4DE'],
+  [S, '#F98531'],
+  [T, '#34CE2A'],
+  [O, '#C16FF8'],
+  [L, '#FED767'],
+  [I, '#FE244A'],
+  [J, '#97AFFE']
 ]
 
 // generate random pieces
