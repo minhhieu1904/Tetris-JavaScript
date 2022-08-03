@@ -1,20 +1,27 @@
 <html>
 
 <head>
-    <title>Tetris Game JS</title>
-    <link rel='stylesheet' href='style.css' />
+  <title>Tetris Game JS</title>
+  <link rel='stylesheet' href='style.css' />
 </head>
 
 <body>
-    <div class="title">This Game Was Created By Team 1</div>
-    <div class="container-box">
-        <canvas id="tetris" width="200" height="400"></canvas>
+  <div class="title">This Game Was Created By Team 1</div>
+  <div class="container-box">
+    <canvas id="tetris" width="200" height="400"></canvas>
+    <div id="aside">
+      <div>Score</div>
+      <div id="score">0</div>
+      <div>Dificulty</div>
+      <div id="dificulty">Easy</div>
+      <button id="easy" type="button" class="dif">Easy</button> 
+      <button id="medium" type="button" class="dif">Medium</button>
+      <button id="hard" type="button" class="dif">Hard</button>
     </div>
-    <div>
-        Score : <div id="score">0</div>
-    </div>
-    <script src="tetrominoes.js"></script>
-    <script src="tetris.js"></script>
+  </div>
+
+  <script src="tetrominoes.js"></script>
+  <script src="tetris.js"></script>
 </body>
 
 </html>
