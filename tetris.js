@@ -1,7 +1,7 @@
 const cvs = document.getElementById('tetris')
 const ctx = cvs.getContext('2d')
-const ncvs = document.getElementById('tetris-next')
-const nctx = ncvs.getContext('2d')
+const cvs_next_piece = document.getElementById('tetris-next')
+const ctx_next_piece = cvs_next_piece.getContext('2d')
 const scoreElement = document.getElementById('score')
 const playElement = document.getElementById('btn-play')
 const pauseElement = document.getElementById('btn-pause')
@@ -13,8 +13,8 @@ const buttons = document.getElementsByTagName('button');
 
 const ROW = 20
 const COL = (COLUMN = 10)
-const N_ROW = 6
-const N_COL = 6
+const ROW_NEXT_PIECE = 6
+const COL_NEXT_PIECE = 6
 const SQ = (squareSize = 20)
 const VACANT = '#49361E' // color of an empty square
 let delayDefault = 1000
@@ -42,7 +42,7 @@ function changeDifficult(text) {
 }
 
 // draw a square
-function drawSquare(x, y, color) {
+function drawSquare(x, y, color, ctx) {
   ctx.fillStyle = color
   ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
 
@@ -51,16 +51,17 @@ function drawSquare(x, y, color) {
 }
 
 function drawNextSquare(x, y, color) {
-  nctx.fillStyle = color
-  nctx.fillRect(x * SQ, y * SQ, SQ, SQ)
+  ctx_next_piece.fillStyle = color
+  ctx_next_piece.fillRect(x * SQ, y * SQ, SQ, SQ)
 
-  nctx.strokeStyle = '#3A2A17';
-  nctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
+  ctx_next_piece.strokeStyle = '#3A2A17';
+  ctx_next_piece.strokeRect(x * SQ, y * SQ, SQ, SQ)
 }
 
 // create the board
 
 let board = []
+let board_Next_Piece = []
 function createBoard() {
   for (r = 0; r < ROW; r++) {
     board[r] = []
@@ -70,38 +71,40 @@ function createBoard() {
   }
 }
 
-let nextBoard = []
-function createNextBoard() {
-  for (r = 0; r < N_ROW; r++) {
-    nextBoard[r] = []
-    for (c = 0; c < N_COL; c++) {
-      nextBoard[r][c] = VACANT
+createBoard()
+
+function createBoard_Next_Piece() {
+  for (r = 0; r < ROW_NEXT_PIECE; r++) {
+    board_Next_Piece[r] = []
+    for (c = 0; c < COL_NEXT_PIECE; c++) {
+      board_Next_Piece[r][c] = VACANT
     }
   }
 }
 
-createBoard()
-createNextBoard()
+createBoard_Next_Piece()
+
 
 // draw the board
 function drawBoard() {
   for (r = 0; r < ROW; r++) {
     for (c = 0; c < COL; c++) {
-      drawSquare(c, r, board[r][c])
-    }
-  }
-}
-
-function drawNextBoard() {
-  for (r = 0; r < N_ROW; r++) {
-    for (c = 0; c < N_COL; c++) {
-      drawNextSquare(c, r, nextBoard[r][c])
+      drawSquare(c, r, board[r][c], ctx)
     }
   }
 }
 
 drawBoard()
-drawNextBoard()
+
+function drawBoard_Next_Piece() {
+  for (r = 0; r < ROW_NEXT_PIECE; r++) {
+    for (c = 0; c < COL_NEXT_PIECE; c++) {
+      drawSquare(c, r, board_Next_Piece[r][c], ctx_next_piece)
+    }
+  }
+}
+
+drawBoard_Next_Piece()
 
 // the pieces and their colors
 
