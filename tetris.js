@@ -1,33 +1,48 @@
 const cvs = document.getElementById('tetris')
 const ctx = cvs.getContext('2d')
+const ncvs = document.getElementById('tetris-next')
+const nctx = ncvs.getContext('2d')
 const scoreElement = document.getElementById('score')
+const playElement = document.getElementById('btn-play')
+const pauseElement = document.getElementById('btn-pause')
+const restartElement = document.getElementById('btn-restart')
+const easyElement = document.getElementById('btn-easy')
+const normalElement = document.getElementById('btn-normal')
+const hardElement = document.getElementById('btn-hard')
+const buttons = document.getElementsByTagName('button');
 
 const ROW = 20
 const COL = (COLUMN = 10)
+const N_ROW = 6
+const N_COL = 6
 const SQ = (squareSize = 20)
 const VACANT = '#49361E' // color of an empty square
 let delayDefault = 1000
 let delay = delayDefault
 const difficults = ['Easy', 'Normal', 'Hard']
 
-function changeDifficult () {
-  let e = document.getElementById('difficults')
-  let text = e.options[e.selectedIndex].text
+function changeDifficult(text) {
+  for (let i = 0; i < buttons.length; i++)
+    buttons[i].classList.remove('active');
+
   switch (text) {
     case 'Normal':
       delayDefault = 500
+      normalElement.classList.add('active')
       break
     case 'Hard':
       delayDefault = 150
+      hardElement.classList.add('active')
       break
     default:
       delayDefault = 1000
+      easyElement.classList.add('active')
       break
   }
 }
 
 // draw a square
-function drawSquare (x, y, color) {
+function drawSquare(x, y, color) {
   ctx.fillStyle = color
   ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
 
@@ -35,10 +50,18 @@ function drawSquare (x, y, color) {
   ctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
 }
 
+function drawNextSquare(x, y, color) {
+  nctx.fillStyle = color
+  nctx.fillRect(x * SQ, y * SQ, SQ, SQ)
+
+  nctx.strokeStyle = '#3A2A17';
+  nctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
+}
+
 // create the board
 
 let board = []
-function createBoard () {
+function createBoard() {
   for (r = 0; r < ROW; r++) {
     board[r] = []
     for (c = 0; c < COL; c++) {
@@ -47,10 +70,21 @@ function createBoard () {
   }
 }
 
+let nextBoard = []
+function createNextBoard() {
+  for (r = 0; r < N_ROW; r++) {
+    nextBoard[r] = []
+    for (c = 0; c < N_COL; c++) {
+      nextBoard[r][c] = VACANT
+    }
+  }
+}
+
 createBoard()
+createNextBoard()
 
 // draw the board
-function drawBoard () {
+function drawBoard() {
   for (r = 0; r < ROW; r++) {
     for (c = 0; c < COL; c++) {
       drawSquare(c, r, board[r][c])
@@ -58,7 +92,16 @@ function drawBoard () {
   }
 }
 
+function drawNextBoard() {
+  for (r = 0; r < N_ROW; r++) {
+    for (c = 0; c < N_COL; c++) {
+      drawNextSquare(c, r, nextBoard[r][c])
+    }
+  }
+}
+
 drawBoard()
+drawNextBoard()
 
 // the pieces and their colors
 
@@ -74,7 +117,7 @@ const PIECES = [
 
 // generate random pieces
 
-function randomPiece () {
+function randomPiece() {
   delay = delayDefault
   let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
   return new Piece(PIECES[r][0], PIECES[r][1])
@@ -84,7 +127,7 @@ let p = randomPiece()
 
 // The Object Piece
 
-function Piece (tetromino, color) {
+function Piece(tetromino, color) {
   this.tetromino = tetromino
   this.color = color
 
@@ -276,7 +319,16 @@ Piece.prototype.collision = function (x, y, piece) {
 
 document.addEventListener('keydown', CONTROL)
 
-function CONTROL (event) {
+playElement.addEventListener('click', function () {
+  dropStart = Date.now();
+  play();
+});
+
+pauseElement.addEventListener('click', function () {
+  p.togglePause();
+})
+
+function CONTROL(event) {
   switch (event.keyCode) {
     // key Enter
     case 13:
@@ -314,7 +366,7 @@ function CONTROL (event) {
 
 let dropStart = Date.now()
 let gameOver = false
-function drop () {
+function drop() {
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
@@ -328,7 +380,7 @@ function drop () {
 }
 
 // play function
-function play () {
+function play() {
   if (gameOver) {
     gameOver = false
     board = []
@@ -336,6 +388,7 @@ function play () {
     drawBoard()
     drop()
   } else {
+    delay = delayDefault
     drop()
   }
 }

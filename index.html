@@ -8,15 +8,26 @@
 <body>
   <div class="title">This Game Was Created By Team 1</div>
   <div class="container-box">
-    <canvas id="tetris" width="200" height="400"></canvas>
-    <div id="aside">
-      <div>Score</div>
+    <div class="main-control">
+      <div>
+        <button id="btn-easy" onclick="changeDifficult('Easy')" type="button" class="active">Easy</button>
+        <button id="btn-normal" onclick="changeDifficult('Normal')" type="button">Normal</button>
+        <button id="btn-hard" onclick="changeDifficult('Hard')" type="button">Hard</button>
+      </div>
+      <div>
+        <button id="btn-play" type="button">Play</button>
+        <button id="btn-pause" type="button">Pause</button>
+        <button id="btn-restart" type="button">Restart</button>
+      </div>
+    </div>
+    <div class="main-play">
+      <canvas id="tetris" width="200" height="400"></canvas>
+    </div>
+    <div class="info-play">
+      <h4>Next Piece</h4>
+      <canvas id="tetris-next" width="120" height="120"></canvas>
+      <h4 style="margin-top: 1rem;">Score</h4>
       <div id="score">0</div>
-      <div>Dificulty</div>
-      <div id="dificulty">Easy</div>
-      <button id="easy" type="button" class="dif">Easy</button> 
-      <button id="medium" type="button" class="dif">Medium</button>
-      <button id="hard" type="button" class="dif">Hard</button>
     </div>
   </div>
 

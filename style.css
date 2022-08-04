@@ -1,31 +1,70 @@
-.title { 
-    margin-bottom: 50px;
-}
-.container-box {
-    display: flex;
-    justify-content: center;
+* {
+  font-size: 1.25rem;
+  font-family: monospace;
 }
 
-#aside {
-  margin-left: 30px;
+h4 {
+  margin: unset;
 }
 
-.dif {
-  width: 100%;
-  height: 30px;
-  margin-bottom: 10px;
+.title {
   display: block;
+  margin-bottom: 50px;
+  text-align: center;
+  font-weight: bold;
 }
 
-#score, #dificulty{
-    display: inline-block;
-    margin-bottom: 30px;
+.container-box {
+  display: flex;
+  justify-content: center;
 }
 
-div {
-    font-size: 25px;
-    font-weight: bold;
-    font-family: monospace;
-    text-align: center;
+.container-box .main-control {
+  margin-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
+.container-box .main-control button {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: darkgray;
+  border-radius: 0.25rem;
+}
+
+.container-box .main-control button.active {
+  background-color: blue;
+  color: white;
+}
+
+.container-box .main-control button:last-child {
+  margin-bottom: unset;
+}
+
+.container-box .info-play {
+  margin-left: 1rem;
+  text-align: center;
+}
+
+#btn-play{
+  background-color: red;
+  color: white;
+}
+
+#btn-pause{
+  background-color: yellow;
+  color: black;
+}
+
+#btn-restart{
+  background-color: green;
+  color: white;
+}
+
+#score,
+#dificulty {
+  display: inline-block;
+  margin-bottom: 30px;
+}
