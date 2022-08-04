@@ -1,9 +1,13 @@
 const cvs = document.getElementById('tetris')
 const ctx = cvs.getContext('2d')
+const cvs_next_piece = document.getElementById('next_piece')
+const ctx_next_piece = cvs_next_piece.getContext('2d')
 const scoreElement = document.getElementById('score')
 
 const ROW = 20
 const COL = (COLUMN = 10)
+const ROW_NEXT_PIECE = 6
+const COL_NEXT_PIECE = 6
 const SQ = (squareSize = 20)
 const VACANT = 'WHITE' // color of an empty square
 let delayDefault = 1000
@@ -27,7 +31,7 @@ function changeDifficult () {
 }
 
 // draw a square
-function drawSquare (x, y, color) {
+function drawSquare (x, y, color, ctx) {
   ctx.fillStyle = color
   ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
 
@@ -38,6 +42,7 @@ function drawSquare (x, y, color) {
 // create the board
 
 let board = []
+let board_Next_Piece = []
 function createBoard () {
   for (r = 0; r < ROW; r++) {
     board[r] = []
@@ -49,16 +54,37 @@ function createBoard () {
 
 createBoard()
 
+function createBoard_Next_Piece () {
+  for (r = 0; r < ROW_NEXT_PIECE; r++) {
+    board_Next_Piece[r] = []
+    for (c = 0; c < COL_NEXT_PIECE; c++) {
+      board_Next_Piece[r][c] = VACANT
+    }
+  }
+}
+
+createBoard_Next_Piece()
+
 // draw the board
 function drawBoard () {
   for (r = 0; r < ROW; r++) {
     for (c = 0; c < COL; c++) {
-      drawSquare(c, r, board[r][c])
+      drawSquare(c, r, board[r][c], ctx)
     }
   }
 }
 
 drawBoard()
+
+function drawBoard_Next_Piece () {
+  for (r = 0; r < ROW_NEXT_PIECE; r++) {
+    for (c = 0; c < COL_NEXT_PIECE; c++) {
+      drawSquare(c, r, board_Next_Piece[r][c], ctx_next_piece)
+    }
+  }
+}
+
+drawBoard_Next_Piece()
 
 // the pieces and their colors
 
@@ -81,6 +107,7 @@ function randomPiece () {
 }
 
 let p = randomPiece()
+let p_next = randomPiece()
 
 // The Object Piece
 
@@ -103,7 +130,18 @@ Piece.prototype.fill = function (color) {
     for (c = 0; c < this.activeTetromino.length; c++) {
       // we draw only occupied squares
       if (this.activeTetromino[r][c]) {
-        drawSquare(this.x + c, this.y + r, color)
+        drawSquare(this.x + c, this.y + r, color, ctx)
+      }
+    }
+  }
+}
+
+Piece.prototype.fillNext = function (color) {
+  for (r = 0; r < this.activeTetromino.length; r++) {
+    for (c = 0; c < this.activeTetromino.length; c++) {
+      // we draw only occupied squares
+      if (this.activeTetromino[r][c]) {
+        drawSquare(this.x + c, this.y + r, color, ctx_next_piece)
       }
     }
   }
@@ -115,15 +153,32 @@ Piece.prototype.draw = function () {
   this.fill(this.color)
 }
 
+Piece.prototype.drawNext = function () {
+  this.x = 1
+  this.y = 2
+  this.fillNext(this.color)
+  this.x = 3
+  this.y = -2
+}
+
+// p_next.drawNext()
 // undraw a piece
 
 Piece.prototype.unDraw = function () {
   this.fill(VACANT)
 }
 
+Piece.prototype.unDrawNext = function () {
+  this.fillNext(VACANT)
+  this.x = 3
+  this.y = -2
+}
+
 // move Down the piece
 
 Piece.prototype.moveDown = function () {
+  if(this.y == -2)
+    p_next.drawNext()
   if (!this.collision(0, 1, this.activeTetromino)) {
     this.unDraw()
     this.y++
@@ -131,7 +186,12 @@ Piece.prototype.moveDown = function () {
   } else {
     // we lock the piece and generate a new one
     this.lock()
-    p = randomPiece()
+    p = p_next
+    board_Next_Piece = []
+    createBoard_Next_Piece()
+    drawBoard_Next_Piece()
+    p_next = randomPiece()
+    p_next.unDraw()
   }
 }
 
@@ -184,10 +244,22 @@ Piece.prototype.fall = function () {
   drop()
 }
 
+Piece.prototype.restart = function () {
+  score = 0
+  gameOver = false
+  board = []
+  createBoard()
+  drawBoard()
+  p = randomPiece()
+  dropStart = Date.now()
+  drop()
+}
+
 let pause = false
 Piece.prototype.togglePause = function () {
   pause = !pause
-
+  document.getElementById('pause-text').classList.toggle('hidden')
+  document.getElementById('backdrop').classList.toggle('backdrop')
 }
 
 let score = 0
@@ -302,8 +374,13 @@ function CONTROL (event) {
     case 40:
       p.moveDown()
       break
+      // key P
     case 80:
       p.togglePause()
+      break
+      // key R
+    case 82:
+      p.restart()
       break
     default:
       break
