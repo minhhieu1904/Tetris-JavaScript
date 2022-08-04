@@ -68,3 +68,25 @@ h4 {
   display: inline-block;
   margin-bottom: 30px;
 }
+.backdrop {
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    opacity: .3;
+    transition: 0.5s;
+    background-color: rgb(104, 103, 103);
+}
+
+#pause-text {
+    position: fixed;
+    top: 50%;
+    left: calc(50% - 35px);
+}
+
+#pause-text span {
+    color: red;
+}
+
+.hidden {
+    display: none;
+}
