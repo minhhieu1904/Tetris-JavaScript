@@ -3,6 +3,14 @@
   font-family: monospace;
 }
 
+body {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
 h4 {
   margin: unset;
 }
@@ -80,7 +88,7 @@ h4 {
 #pause-text {
     position: fixed;
     top: 50%;
-    left: calc(50% - 35px);
+    left: calc(50% - 48px);
 }
 
 #pause-text span {

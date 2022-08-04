@@ -9,7 +9,7 @@ const restartElement = document.getElementById('btn-restart')
 const easyElement = document.getElementById('btn-easy')
 const normalElement = document.getElementById('btn-normal')
 const hardElement = document.getElementById('btn-hard')
-const buttons = document.getElementsByTagName('button');
+const buttons = document.getElementsByTagName('button')
 
 const ROW = 20
 const COL = (COLUMN = 10)
@@ -19,11 +19,11 @@ const SQ = (squareSize = 20)
 const VACANT = '#49361E' // color of an empty square
 let delayDefault = 1000
 let delay = delayDefault
+let pause = false
 const difficults = ['Easy', 'Normal', 'Hard']
 
-function changeDifficult(text) {
-  for (let i = 0; i < buttons.length; i++)
-    buttons[i].classList.remove('active');
+function changeDifficult (text) {
+  for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove('active')
 
   switch (text) {
     case 'Normal':
@@ -39,14 +39,15 @@ function changeDifficult(text) {
       easyElement.classList.add('active')
       break
   }
+  delay = delayDefault
 }
 
 // draw a square
-function drawSquare(x, y, color, ctx) {
+function drawSquare (x, y, color, ctx) {
   ctx.fillStyle = color
   ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
 
-  ctx.strokeStyle = '#3A2A17';
+  ctx.strokeStyle = '#3A2A17'
   ctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
 }
 
@@ -54,7 +55,7 @@ function drawSquare(x, y, color, ctx) {
 
 let board = []
 let board_Next_Piece = []
-function createBoard() {
+function createBoard () {
   for (r = 0; r < ROW; r++) {
     board[r] = []
     for (c = 0; c < COL; c++) {
@@ -77,7 +78,7 @@ function createBoard_Next_Piece () {
 createBoard_Next_Piece()
 
 // draw the board
-function drawBoard() {
+function drawBoard () {
   for (r = 0; r < ROW; r++) {
     for (c = 0; c < COL; c++) {
       drawSquare(c, r, board[r][c], ctx)
@@ -87,7 +88,7 @@ function drawBoard() {
 
 drawBoard()
 
-function drawBoard_Next_Piece() {
+function drawBoard_Next_Piece () {
   for (r = 0; r < ROW_NEXT_PIECE; r++) {
     for (c = 0; c < COL_NEXT_PIECE; c++) {
       drawSquare(c, r, board_Next_Piece[r][c], ctx_next_piece)
@@ -111,7 +112,8 @@ const PIECES = [
 
 // generate random pieces
 
-function randomPiece() {
+function randomPiece () {
+  debugger
   delay = delayDefault
   let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
   return new Piece(PIECES[r][0], PIECES[r][1])
@@ -122,7 +124,7 @@ let p_next = randomPiece()
 
 // The Object Piece
 
-function Piece(tetromino, color) {
+function Piece (tetromino, color) {
   this.tetromino = tetromino
   this.color = color
 
@@ -188,8 +190,7 @@ Piece.prototype.unDrawNext = function () {
 // move Down the piece
 
 Piece.prototype.moveDown = function () {
-  if(this.y == -2)
-    p_next.drawNext()
+  if (this.y == -2) p_next.drawNext()
   if (!this.collision(0, 1, this.activeTetromino)) {
     this.unDraw()
     this.y++
@@ -256,22 +257,29 @@ Piece.prototype.fall = function () {
 }
 
 Piece.prototype.restart = function () {
-  score = 0
-  gameOver = false
-  board = []
-  createBoard()
-  drawBoard()
-  p = randomPiece()
-  dropStart = Date.now()
-  drop()
+  if (!pause) {
+    score = 0
+    gameOver = false
+    board = []
+    createBoard()
+    drawBoard()
+    p = randomPiece()
+    dropStart = Date.now()
+    drop()
+  }
 }
 
-let pause = false
 Piece.prototype.togglePause = function () {
   pause = !pause
   document.getElementById('pause-text').classList.toggle('hidden')
   document.getElementById('backdrop').classList.toggle('backdrop')
 }
+
+document.getElementById('backdrop').addEventListener('click', function () {
+  pause = false
+  document.getElementById('pause-text').classList.toggle('hidden')
+  document.getElementById('backdrop').classList.toggle('backdrop')
+})
 
 let score = 0
 
@@ -360,19 +368,19 @@ Piece.prototype.collision = function (x, y, piece) {
 document.addEventListener('keydown', CONTROL)
 
 playElement.addEventListener('click', function () {
-  dropStart = Date.now();
-  play();
-});
+  dropStart = Date.now()
+  play()
+})
 
 pauseElement.addEventListener('click', function () {
-  p.togglePause();
+  p.togglePause()
 })
 
 restartElement.addEventListener('click', function () {
-  p.restart();
+  p.restart()
 })
 
-function CONTROL(event) {
+function CONTROL (event) {
   switch (event.keyCode) {
     // key Enter
     case 13:
@@ -398,11 +406,11 @@ function CONTROL(event) {
     case 40:
       p.moveDown()
       break
-      // key P
+    // key P
     case 80:
       p.togglePause()
       break
-      // key R
+    // key R
     case 82:
       p.restart()
       break
@@ -415,7 +423,7 @@ function CONTROL(event) {
 
 let dropStart = Date.now()
 let gameOver = false
-function drop() {
+function drop () {
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
@@ -429,7 +437,7 @@ function drop() {
 }
 
 // play function
-function play() {
+function play () {
   if (gameOver) {
     gameOver = false
     board = []
