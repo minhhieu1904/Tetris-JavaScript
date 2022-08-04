@@ -1,33 +1,99 @@
 const cvs = document.getElementById('tetris')
-const btnStart = document.getElementById('btn-start');
+const cvsNext = document.getElementById('next-tetris')
 const ctx = cvs.getContext('2d')
+const ctxNext = cvsNext.getContext('2d')
+
 const scoreElement = document.getElementById('score')
 
 const ROW = 20
+const NextRow = (NextCol =  10)
+
+
 const COL = (COLUMN = 10)
 const SQ = (squareSize = 20)
-const VACANT = 'WHITE' // Màu mặc định của ô vuông
-const delay = 1000
 
+const VACANT = 'WHITE' // color of an empty square
+let delayDefault = 1000
+let delay = delayDefault
+let restart = false;
+const difficults = ['Easy', 'Normal', 'Hard']
 
+function changeDifficult () {
+  let e = document.getElementById('difficults')
+  let text = e.options[e.selectedIndex].text
+  switch (text) {
+    case 'Normal':
+      delayDefault = 500
+      break
+    case 'Hard':
+      delayDefault = 150
+      break
+    default:
+      delayDefault = 1000
+      break
+  }
+}
 
-//#region Variables
-let score = 0
+// draw a square
+function drawSquare (x, y, color) {
+  ctx.fillStyle = color
+  ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
+
+  ctx.strokeStyle = 'BLACK'
+  ctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
+}
+
+function drawNextSquare(x, y, color){
+  ctxNext.fillStyle = color
+  ctxNext.fillRect(x * SQ, y * SQ, SQ, SQ)
+
+  ctxNext.strokeStyle = 'BLACK'
+  ctxNext.strokeRect(x * SQ, y * SQ, SQ, SQ)
+}
+
 // create the board
+
 let board = []
-let dropStart = Date.now()
-let gameOver = false
-let pause = false;
-//#endregion
-
-
+let boardNext = []
+function createBoard () {
+  for (r = 0; r < ROW; r++) {
+    board[r] = []
+    for (c = 0; c < COL; c++) {
+      board[r][c] = VACANT
+    }
+  }
+}
+function createBoardNext () {
+  for (r = 0; r < NextRow; r++) {
+    boardNext[r] = []
+    for (c = 0; c < NextCol; c++) {
+      boardNext[r][c] = VACANT
+    }
+  }
+}
 
 createBoard()
+createBoardNext()
 
 // draw the board
+function drawBoard () {
+  for (r = 0; r < ROW; r++) {
+    for (c = 0; c < COL; c++) {
+      drawSquare(c, r, board[r][c])
+    }
+  }
+}
 
+function drawBoardNext () {
+  for (r = 0; r < NextRow; r++) {
+    for (c = 0; c < NextCol; c++) {
+      drawNextSquare(c, r, boardNext[r][c])
+    }
+  }
+}
 
 drawBoard()
+drawBoardNext()
 
 // the pieces and their colors
 
@@ -43,13 +109,18 @@ const PIECES = [
 
 // generate random pieces
 
-
+function randomPiece () {
+  delay = delayDefault
+  let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
+  return new Piece(PIECES[r][0], PIECES[r][1])
+}
 
 let p = randomPiece()
+let pNext = randomPiece();
 
 // The Object Piece
 
-function Piece(tetromino, color) {
+function Piece (tetromino, color) {
   this.tetromino = tetromino
   this.color = color
 
@@ -61,8 +132,8 @@ function Piece(tetromino, color) {
   this.y = -2
 }
 
-//#region Static Methods
 // fill function
+
 Piece.prototype.fill = function (color) {
   for (r = 0; r < this.activeTetromino.length; r++) {
     for (c = 0; c < this.activeTetromino.length; c++) {
@@ -75,6 +146,7 @@ Piece.prototype.fill = function (color) {
 }
 
 // draw a piece to the board
+
 Piece.prototype.draw = function () {
   this.fill(this.color)
 }
@@ -86,9 +158,8 @@ Piece.prototype.unDraw = function () {
 }
 
 // move Down the piece
-// Mỗi lần piece rớt xuống 1 ô thì gọi hàm này 
+
 Piece.prototype.moveDown = function () {
-  // Nếu như dòng cuối cùng có đủ các màu, thì xoá dòng cuối cùng đi và vẽ lại
   if (!this.collision(0, 1, this.activeTetromino)) {
     this.unDraw()
     this.y++
@@ -96,7 +167,11 @@ Piece.prototype.moveDown = function () {
   } else {
     // we lock the piece and generate a new one
     this.lock()
-    p = randomPiece()
+    debugger
+    p = pNext;
+    pNext = randomPiece()
+    // Hiển thị ở csvNext 
+
   }
 }
 
@@ -145,8 +220,17 @@ Piece.prototype.rotate = function () {
 }
 
 Piece.prototype.fall = function () {
+  delay = 0
+  drop()
+}
+
+let pause = false
+Piece.prototype.togglePause = function () {
+  pause = !pause
 
 }
+
+let score = 0
 
 Piece.prototype.lock = function () {
   for (r = 0; r < this.activeTetromino.length; r++) {
@@ -173,6 +257,8 @@ Piece.prototype.lock = function () {
       isRowFull = isRowFull && board[r][c] != VACANT
     }
     if (isRowFull) {
+      let audio = new Audio('sound/pop.ogg')
+      audio.play()
       // if the row is full
       // we move down all the rows above it
       for (y = r; y > 1; y--) {
@@ -196,19 +282,20 @@ Piece.prototype.lock = function () {
 }
 
 // collision fucntion
-//  Hàm xử lí lúc va chạm
+
 Piece.prototype.collision = function (x, y, piece) {
+  // debugger
   for (r = 0; r < piece.length; r++) {
     for (c = 0; c < piece.length; c++) {
-      // Nếu ô vuông trống thì bỏ qua
+      // if the square is empty, we skip it
       if (!piece[r][c]) {
         continue
       }
-      // Toạ độ của piece sau khi chuyển động
+      // coordinates of the piece after movement
       let newX = this.x + c + x
       let newY = this.y + r + y
 
-      // conditions // Nếu đầy row thì trả về True
+      // conditions
       if (newX < 0 || newX >= COL || newY >= ROW) {
         return true
       }
@@ -216,7 +303,7 @@ Piece.prototype.collision = function (x, y, piece) {
       if (newY < 0) {
         continue
       }
-      // check if there is a locked piece already in place
+      // check if there is a locked piece alrady in place
       if (board[newY][newX] != VACANT) {
         return true
       }
@@ -225,46 +312,20 @@ Piece.prototype.collision = function (x, y, piece) {
   return false
 }
 
-//#endregion
+// CONTROL the piece
 
-//#region Methods
-function randomPiece() {
-  let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
-  return new Piece(PIECES[r][0], PIECES[r][1])
-}
+document.addEventListener('keydown', CONTROL)
 
-function drawBoard() {
-  for (r = 0; r < ROW; r++) {
-    for (c = 0; c < COL; c++) {
-      drawSquare(c, r, board[r][c])
-    }
-  }
-}
-
-function createBoard() {
-  for (r = 0; r < ROW; r++) {
-    board[r] = []
-    for (c = 0; c < COL; c++) {
-      board[r][c] = VACANT
-    }
-  }
-}
-
-// draw a square
-function drawSquare(x, y, color) {
-  ctx.fillStyle = color
-  ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
-
-  ctx.strokeStyle = 'BLACK'
-  ctx.strokeRect(x * SQ, y * SQ, SQ, SQ)
-}
-
-function CONTROL(event) {
+function CONTROL (event) {
   switch (event.keyCode) {
     // key Enter
     case 13:
       dropStart = Date.now()
       play()
+      break
+    // key space
+    case 32:
+      p.fall()
       break
     case 37:
       p.moveLeft()
@@ -281,53 +342,53 @@ function CONTROL(event) {
     case 40:
       p.moveDown()
       break
-    case 32: // SPACE
-      p.fall()
-      break
-    case 80: // Bấm nút P
-      pause = !pause;
+    case 80:
+      p.togglePause()
       break
     default:
       break
   }
 }
 
-//#endregion
+// drop the piece every {delay}
 
-
-// CONTROL the piece
-
-document.addEventListener('keydown', CONTROL)
-
-
-
-// Hạ ô xuống sau mỗi 1 giây
-function drop() {
+let dropStart = Date.now()
+let gameOver = false
+function drop () {
   let now = Date.now()
   let delta = now - dropStart
-
-  if (delta > delay && !pause) {
+  // delay desc - difficult asc
+  if (delta > delay && !pause && !restart) {
     p.moveDown()
     dropStart = Date.now()
-  } 
-
+  }
   if (!gameOver) {
     requestAnimationFrame(drop)
   }
 }
 
-// Hàm xử lí chạy
-function play() {
+// play function
+function play () {
+  restart = false;
   if (gameOver) {
     gameOver = false
     board = []
     createBoard()
     drawBoard()
-    drop()
-  } else {
-    drop()
+    // drop()
   }
+  
 }
 
 
-play();
+$('#btnStart').click(()=>{
+  console.log('start');
+  drop()
+})
+
+$('#btnReset').click(() => {
+  console.log('reset');
+  play();
+})
+
+
