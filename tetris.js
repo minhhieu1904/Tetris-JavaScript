@@ -20,9 +20,11 @@ const VACANT = '#49361E' // color of an empty square
 let delayDefault = 1000
 let delay = delayDefault
 let pause = false
+let gameOver = false
+
 const difficults = ['Easy', 'Normal', 'Hard']
 
-function changeDifficult (text) {
+function changeDifficult(text) {
   for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove('active')
 
   switch (text) {
@@ -43,7 +45,7 @@ function changeDifficult (text) {
 }
 
 // draw a square
-function drawSquare (x, y, color, ctx) {
+function drawSquare(x, y, color, ctx) {
   ctx.fillStyle = color
   ctx.fillRect(x * SQ, y * SQ, SQ, SQ)
 
@@ -55,7 +57,8 @@ function drawSquare (x, y, color, ctx) {
 
 let board = []
 let board_Next_Piece = []
-function createBoard () {
+
+function createBoard() {
   for (r = 0; r < ROW; r++) {
     board[r] = []
     for (c = 0; c < COL; c++) {
@@ -66,7 +69,7 @@ function createBoard () {
 
 createBoard()
 
-function createBoard_Next_Piece () {
+function createBoard_Next_Piece() {
   for (r = 0; r < ROW_NEXT_PIECE; r++) {
     board_Next_Piece[r] = []
     for (c = 0; c < COL_NEXT_PIECE; c++) {
@@ -78,7 +81,7 @@ function createBoard_Next_Piece () {
 createBoard_Next_Piece()
 
 // draw the board
-function drawBoard () {
+function drawBoard() {
   for (r = 0; r < ROW; r++) {
     for (c = 0; c < COL; c++) {
       drawSquare(c, r, board[r][c], ctx)
@@ -88,7 +91,7 @@ function drawBoard () {
 
 drawBoard()
 
-function drawBoard_Next_Piece () {
+function drawBoard_Next_Piece() {
   for (r = 0; r < ROW_NEXT_PIECE; r++) {
     for (c = 0; c < COL_NEXT_PIECE; c++) {
       drawSquare(c, r, board_Next_Piece[r][c], ctx_next_piece)
@@ -112,8 +115,7 @@ const PIECES = [
 
 // generate random pieces
 
-function randomPiece () {
-  debugger
+function randomPiece() {
   delay = delayDefault
   let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
   return new Piece(PIECES[r][0], PIECES[r][1])
@@ -124,7 +126,7 @@ let p_next = randomPiece()
 
 // The Object Piece
 
-function Piece (tetromino, color) {
+function Piece(tetromino, color) {
   this.tetromino = tetromino
   this.color = color
 
@@ -139,6 +141,7 @@ function Piece (tetromino, color) {
 // fill function
 
 Piece.prototype.fill = function (color) {
+  console.log('fill');
   for (r = 0; r < this.activeTetromino.length; r++) {
     for (c = 0; c < this.activeTetromino.length; c++) {
       // we draw only occupied squares
@@ -150,6 +153,7 @@ Piece.prototype.fill = function (color) {
 }
 
 Piece.prototype.fillNext = function (color) {
+  console.log('fillNext');
   for (r = 0; r < this.activeTetromino.length; r++) {
     for (c = 0; c < this.activeTetromino.length; c++) {
       // we draw only occupied squares
@@ -163,6 +167,7 @@ Piece.prototype.fillNext = function (color) {
 // draw a piece to the board
 
 Piece.prototype.draw = function () {
+  console.log('draw');
   this.fill(this.color)
 }
 
@@ -190,20 +195,24 @@ Piece.prototype.unDrawNext = function () {
 // move Down the piece
 
 Piece.prototype.moveDown = function () {
-  if (this.y == -2) p_next.drawNext()
-  if (!this.collision(0, 1, this.activeTetromino)) {
-    this.unDraw()
-    this.y++
-    this.draw()
-  } else {
-    // we lock the piece and generate a new one
-    this.lock()
-    p = p_next
-    board_Next_Piece = []
-    createBoard_Next_Piece()
-    drawBoard_Next_Piece()
-    p_next = randomPiece()
-    p_next.unDraw()
+  console.log("moveDown");
+
+  if (!gameOver) {
+    if (this.y == -2) p_next.drawNext()
+    if (!this.collision(0, 1, this.activeTetromino)) {
+      this.unDraw()
+      this.y++
+      this.draw()
+    } else {
+      // we lock the piece and generate a new one
+      this.lock()
+      p = p_next
+      board_Next_Piece = []
+      createBoard_Next_Piece()
+      drawBoard_Next_Piece()
+      p_next = randomPiece()
+      p_next.unDraw()
+    }
   }
 }
 
@@ -252,11 +261,14 @@ Piece.prototype.rotate = function () {
 }
 
 Piece.prototype.fall = function () {
+  console.log('fall')
   delay = 0
-  drop()
+  if (!gameOver)
+    drop()
 }
 
 Piece.prototype.restart = function () {
+  console.log('restart', gameOver)
   if (!pause) {
     score = 0
     gameOver = false
@@ -269,21 +281,28 @@ Piece.prototype.restart = function () {
   }
 }
 
-Piece.prototype.togglePause = function () {
-  pause = !pause
+Piece.prototype.endGame = function () {
+  console.log('SETTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT ENDDDDDDDDDDDDDDDDDDDDDDDD GAMEEEEEEEEEEEEEEEEEE');
+  gameOver = true
   document.getElementById('pause-text').classList.toggle('hidden')
+  document.getElementById('text-content').innerText = 'Game Over'
   document.getElementById('backdrop').classList.toggle('backdrop')
 }
 
-document.getElementById('backdrop').addEventListener('click', function () {
-  pause = false
+Piece.prototype.togglePause = function () {
+  console.log('Pause');
+  pause = !pause
   document.getElementById('pause-text').classList.toggle('hidden')
+  document.getElementById('text-content').innerText = 'Pause'
   document.getElementById('backdrop').classList.toggle('backdrop')
-})
+}
+
 
 let score = 0
 
 Piece.prototype.lock = function () {
+  console.log('Lock', gameOver)
+
   for (r = 0; r < this.activeTetromino.length; r++) {
     for (c = 0; c < this.activeTetromino.length; c++) {
       // we skip the vacant squares
@@ -292,9 +311,11 @@ Piece.prototype.lock = function () {
       }
       // pieces to lock on top = game over
       if (this.y + r < 0) {
-        alert('Game Over')
+        // alert('Game Over')
+        // GameOver();
+        GameOver();
         // stop request animation frame
-        gameOver = true
+        // gameOver = true
         break
       }
       // we lock the piece
@@ -331,10 +352,11 @@ Piece.prototype.lock = function () {
   // update the score
   scoreElement.innerHTML = score
 }
-
+  
 // collision fucntion
 
 Piece.prototype.collision = function (x, y, piece) {
+  console.log('collision');
   // debugger
   for (r = 0; r < piece.length; r++) {
     for (c = 0; c < piece.length; c++) {
@@ -365,11 +387,20 @@ Piece.prototype.collision = function (x, y, piece) {
 
 // CONTROL the piece
 
+document.getElementById('backdrop').addEventListener('click', function () {
+  pause = false
+  document.getElementById('pause-text').classList.toggle('hidden')
+  document.getElementById('backdrop').classList.toggle('backdrop')
+})
+
+
+console.log('');
 document.addEventListener('keydown', CONTROL)
 
-playElement.addEventListener('click', function () {
+playElement.addEventListener('click', function (event) {
+  event.preventDefault()
   dropStart = Date.now()
-  play()
+  play();
 })
 
 pauseElement.addEventListener('click', function () {
@@ -380,17 +411,24 @@ restartElement.addEventListener('click', function () {
   p.restart()
 })
 
-function CONTROL (event) {
+function CONTROL(event) {
   switch (event.keyCode) {
     // key Enter
     case 13:
       dropStart = Date.now()
-      play()
+      playAgain();
       break
-    // key space
+      // key space
     case 32:
-      p.fall()
+      console.log('Space', gameOver)
+      if (!gameOver) {
+
+        p.fall()
+      }
+
       break
+
+
     case 37:
       p.moveLeft()
       dropStart = Date.now()
@@ -406,11 +444,11 @@ function CONTROL (event) {
     case 40:
       p.moveDown()
       break
-    // key P
+      // key P
     case 80:
       p.togglePause()
       break
-    // key R
+      // key R
     case 82:
       p.restart()
       break
@@ -419,11 +457,13 @@ function CONTROL (event) {
   }
 }
 
+
 // drop the piece every {delay}
 
 let dropStart = Date.now()
-let gameOver = false
-function drop () {
+
+function drop() {
+  console.log('drop', gameOver)
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
@@ -437,14 +477,37 @@ function drop () {
 }
 
 // play function
-function play () {
+function play() {
+  console.log('play', gameOver)
+  //  Trạng thái đang Game Over thì set lại data trước
   if (gameOver) {
     gameOver = false
     board = []
     createBoard()
     drawBoard()
-    drop()
+    // drop()
   } else {
     drop()
   }
+}
+
+function playAgain() {
+  if (gameOver) {
+    gameOver = false
+    board = []
+    createBoard()
+    drawBoard()
+    // drop()
+  }
+
+}
+
+function GameOver() {
+  console.log('Game Over')
+  // stop request animation frame
+  gameOver = true;
+  document.getElementById('pause-text').classList.toggle('hidden')
+  document.getElementById('text-content').innerText = 'Game Over'
+  document.getElementById('backdrop').classList.toggle('backdrop')
+  
 }
