@@ -6,7 +6,25 @@ const ROW = 20
 const COL = (COLUMN = 10)
 const SQ = (squareSize = 20)
 const VACANT = '#49361E' // color of an empty square
-const delay = 1000
+let delayDefault = 1000
+let delay = delayDefault
+const difficults = ['Easy', 'Normal', 'Hard']
+
+function changeDifficult () {
+  let e = document.getElementById('difficults')
+  let text = e.options[e.selectedIndex].text
+  switch (text) {
+    case 'Normal':
+      delayDefault = 500
+      break
+    case 'Hard':
+      delayDefault = 150
+      break
+    default:
+      delayDefault = 1000
+      break
+  }
+}
 
 // draw a square
 function drawSquare (x, y, color) {
@@ -57,6 +75,7 @@ const PIECES = [
 // generate random pieces
 
 function randomPiece () {
+  delay = delayDefault
   let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
   return new Piece(PIECES[r][0], PIECES[r][1])
 }
@@ -161,7 +180,14 @@ Piece.prototype.rotate = function () {
 }
 
 Piece.prototype.fall = function () {
-  
+  delay = 0
+  drop()
+}
+
+let pause = false
+Piece.prototype.togglePause = function () {
+  pause = !pause
+
 }
 
 let score = 0
@@ -191,6 +217,8 @@ Piece.prototype.lock = function () {
       isRowFull = isRowFull && board[r][c] != VACANT
     }
     if (isRowFull) {
+      let audio = new Audio('sound/pop.ogg')
+      audio.play()
       // if the row is full
       // we move down all the rows above it
       for (y = r; y > 1; y--) {
@@ -255,6 +283,10 @@ function CONTROL (event) {
       dropStart = Date.now()
       play()
       break
+    // key space
+    case 32:
+      p.fall()
+      break
     case 37:
       p.moveLeft()
       dropStart = Date.now()
@@ -270,15 +302,15 @@ function CONTROL (event) {
     case 40:
       p.moveDown()
       break
-    case 32:
-      p.fall()
+    case 80:
+      p.togglePause()
       break
     default:
       break
   }
 }
 
-// drop the piece every 1sec
+// drop the piece every {delay}
 
 let dropStart = Date.now()
 let gameOver = false
@@ -286,7 +318,7 @@ function drop () {
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
-  if (delta > delay) {
+  if (delta > delay && !pause) {
     p.moveDown()
     dropStart = Date.now()
   }
