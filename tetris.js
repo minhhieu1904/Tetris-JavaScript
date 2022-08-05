@@ -264,8 +264,8 @@ Piece.prototype.fall = function () {
 
 Piece.prototype.restart = function () {
   if (!pause) {
-    document.getElementById('pause-text').classList.add('hidden')
-    document.getElementById('backdrop').classList.remove('backdrop')
+    text.classList.add('hidden')
+    backdrop.classList.remove('backdrop')
     score = 0
     gameOver = false
     board = []
@@ -284,7 +284,7 @@ Piece.prototype.togglePause = function () {
   backdrop.classList.toggle('backdrop')
 }
 
-document.getElementById('backdrop').addEventListener('click', function () {
+backdrop.addEventListener('click', function () {
   pause = false
   text.classList.add('hidden')
   backdrop.classList.remove('backdrop')
@@ -405,28 +405,28 @@ function CONTROL (event) {
       break
     // key space
     case 32:
-      if (!pause) p.fall()
+      if (!pause && gameStart && !gameOver) p.fall()
       break
     case 37:
-      if (!pause) {
+      if (!pause && gameStart && !gameOver) {
         p.moveLeft()
         dropStart = Date.now()
       }
       break
     case 38:
-      if (!pause) {
+      if (!pause && gameStart && !gameOver) {
         p.rotate()
         dropStart = Date.now()
       }
       break
     case 39:
-      if (!pause) {
+      if (!pause && gameStart && !gameOver) {
         p.moveRight()
         dropStart = Date.now()
       }
       break
     case 40:
-      if (!pause) p.moveDown()
+      if (!pause && gameStart && !gameOver) p.moveDown()
       break
     // key P
     case 80:
@@ -445,11 +445,12 @@ function CONTROL (event) {
 
 let dropStart = Date.now()
 let gameOver = false
+let gameStart = false
 function drop () {
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
-  if (delta > delay && !pause && !gameOver) {
+  if (delta > delay && !pause && !gameOver && gameStart) {
     p.moveDown()
     dropStart = Date.now()
   }
@@ -460,6 +461,7 @@ function drop () {
 
 // play function
 function play () {
+  gameStart = true
   if (gameOver) {
     text.classList.add('hidden')
     backdrop.classList.remove('backdrop')
