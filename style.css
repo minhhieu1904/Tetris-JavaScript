@@ -4,11 +4,11 @@
 }
 
 body {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
 }
 
 h4 {
@@ -51,22 +51,30 @@ h4 {
   margin-bottom: unset;
 }
 
+.container-box .main-play {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .container-box .info-play {
   margin-left: 1rem;
   text-align: center;
+  margin-top: -7px;
 }
 
-#btn-play{
+#btn-play {
   background-color: red;
   color: white;
 }
 
-#btn-pause{
+#btn-pause {
   background-color: yellow;
   color: black;
 }
 
-#btn-restart{
+#btn-restart {
   background-color: green;
   color: white;
 }
@@ -76,25 +84,24 @@ h4 {
   display: inline-block;
   margin-bottom: 30px;
 }
+
 .backdrop {
-    width: 100%;
-    position: absolute;
-    height: 100%;
-    opacity: .3;
-    transition: 0.5s;
-    background-color: rgb(104, 103, 103);
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  opacity: .3;
+  transition: 0.5s;
+  background-color: rgb(104, 103, 103);
 }
 
 #pause-text {
-    position: fixed;
-    top: 50%;
-    left: calc(50% - 48px);
+  position: absolute;
 }
 
-#pause-text span {
-    color: red;
+#pause-text {
+  color: red;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }

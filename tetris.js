@@ -10,6 +10,8 @@ const easyElement = document.getElementById('btn-easy')
 const normalElement = document.getElementById('btn-normal')
 const hardElement = document.getElementById('btn-hard')
 const buttons = document.getElementsByTagName('button')
+const text = document.getElementById('pause-text')
+const backdrop = document.getElementById('backdrop')
 
 const ROW = 20
 const COL = (COLUMN = 10)
@@ -113,7 +115,6 @@ const PIECES = [
 // generate random pieces
 
 function randomPiece () {
-  debugger
   delay = delayDefault
   let r = (randomN = Math.floor(Math.random() * PIECES.length)) // 0 -> 6
   return new Piece(PIECES[r][0], PIECES[r][1])
@@ -252,12 +253,16 @@ Piece.prototype.rotate = function () {
 }
 
 Piece.prototype.fall = function () {
-  delay = 0
-  drop()
+  if (!gameOver) {
+    delay = 0
+    drop()
+  }
 }
 
 Piece.prototype.restart = function () {
   if (!pause) {
+    document.getElementById('pause-text').classList.add('hidden')
+    document.getElementById('backdrop').classList.remove('backdrop')
     score = 0
     gameOver = false
     board = []
@@ -271,14 +276,15 @@ Piece.prototype.restart = function () {
 
 Piece.prototype.togglePause = function () {
   pause = !pause
-  document.getElementById('pause-text').classList.toggle('hidden')
-  document.getElementById('backdrop').classList.toggle('backdrop')
+  text.innerHTML = `Pause`
+  text.classList.toggle('hidden')
+  backdrop.classList.toggle('backdrop')
 }
 
 document.getElementById('backdrop').addEventListener('click', function () {
   pause = false
-  document.getElementById('pause-text').classList.toggle('hidden')
-  document.getElementById('backdrop').classList.toggle('backdrop')
+  text.classList.add('hidden')
+  backdrop.classList.remove('backdrop')
 })
 
 let score = 0
@@ -292,9 +298,11 @@ Piece.prototype.lock = function () {
       }
       // pieces to lock on top = game over
       if (this.y + r < 0) {
-        alert('Game Over')
         // stop request animation frame
         gameOver = true
+        text.innerHTML = `Game over`
+        text.classList.remove('hidden')
+        backdrop.classList.add('backdrop')
         break
       }
       // we lock the piece
@@ -427,7 +435,7 @@ function drop () {
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
-  if (delta > delay && !pause) {
+  if (delta > delay && !pause && !gameOver) {
     p.moveDown()
     dropStart = Date.now()
   }
@@ -439,6 +447,8 @@ function drop () {
 // play function
 function play () {
   if (gameOver) {
+    text.classList.add('hidden')
+    backdrop.classList.remove('backdrop')
     gameOver = false
     board = []
     createBoard()
