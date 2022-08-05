@@ -31,14 +31,17 @@ function changeDifficult (text) {
     case 'Normal':
       delayDefault = 500
       normalElement.classList.add('active')
+      normalElement.blur()
       break
     case 'Hard':
       delayDefault = 150
       hardElement.classList.add('active')
+      hardElement.blur()
       break
     default:
       delayDefault = 1000
       easyElement.classList.add('active')
+      easyElement.blur()
       break
   }
   delay = delayDefault
@@ -378,41 +381,52 @@ document.addEventListener('keydown', CONTROL)
 playElement.addEventListener('click', function () {
   dropStart = Date.now()
   play()
+  this.blur()
 })
 
 pauseElement.addEventListener('click', function () {
   p.togglePause()
+  this.blur()
 })
 
 restartElement.addEventListener('click', function () {
   p.restart()
+  this.blur()
 })
 
 function CONTROL (event) {
   switch (event.keyCode) {
     // key Enter
     case 13:
-      dropStart = Date.now()
-      play()
+      if (!pause) {
+        dropStart = Date.now()
+        play()
+      }
       break
     // key space
     case 32:
-      p.fall()
+      if (!pause) p.fall()
       break
     case 37:
-      p.moveLeft()
-      dropStart = Date.now()
+      if (!pause) {
+        p.moveLeft()
+        dropStart = Date.now()
+      }
       break
     case 38:
-      p.rotate()
-      dropStart = Date.now()
+      if (!pause) {
+        p.rotate()
+        dropStart = Date.now()
+      }
       break
     case 39:
-      p.moveRight()
-      dropStart = Date.now()
+      if (!pause) {
+        p.moveRight()
+        dropStart = Date.now()
+      }
       break
     case 40:
-      p.moveDown()
+      if (!pause) p.moveDown()
       break
     // key P
     case 80:
@@ -420,7 +434,7 @@ function CONTROL (event) {
       break
     // key R
     case 82:
-      p.restart()
+      if (!pause) p.restart()
       break
     default:
       break
