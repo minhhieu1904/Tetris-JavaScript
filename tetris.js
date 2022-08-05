@@ -10,6 +10,7 @@ const easyElement = document.getElementById('btn-easy')
 const normalElement = document.getElementById('btn-normal')
 const hardElement = document.getElementById('btn-hard')
 const buttons = document.getElementsByTagName('button')
+const textContent = document.getElementById('text-content');
 
 const ROW = 20
 const COL = (COLUMN = 10)
@@ -311,11 +312,12 @@ Piece.prototype.lock = function () {
       }
       // pieces to lock on top = game over
       if (this.y + r < 0) {
-        // alert('Game Over')
-        // GameOver();
-        GameOver();
+        textContent.innerHTML = 'Game Over'
+        document.getElementById('pause-text').classList.toggle('hidden')
+        document.getElementById('backdrop').classList.toggle('backdrop')
+
         // stop request animation frame
-        // gameOver = true
+        gameOver = true
         break
       }
       // we lock the piece
@@ -467,7 +469,7 @@ function drop() {
   let now = Date.now()
   let delta = now - dropStart
   // delay desc - difficult asc
-  if (delta > delay && !pause) {
+  if (delta > delay && !pause && !gameOver) {
     p.moveDown()
     dropStart = Date.now()
   }
