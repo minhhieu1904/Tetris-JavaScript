@@ -12,6 +12,8 @@ const hardElement = document.getElementById('btn-hard')
 const buttons = document.getElementsByTagName('button')
 const text = document.getElementById('pause-text')
 const backdrop = document.getElementById('backdrop')
+const note = document.getElementById('myModal')
+const modalBackbrop = document.getElementById('modal-backdrop')
 
 const ROW = 20
 const COL = (COLUMN = 10)
@@ -23,6 +25,20 @@ let delayDefault = 1000
 let delay = delayDefault
 let pause = false
 const difficults = ['Easy', 'Normal', 'Hard']
+
+function showModal() {
+  pause = true
+  note.style.display = 'block'
+  modalBackbrop.classList.remove('hidden')
+  this.blur()
+}
+
+function closeModal() {
+  pause = false
+  note.style.display = 'none'
+  modalBackbrop.classList.add('hidden')
+  this.blur()
+}
 
 function changeDifficult (text) {
   for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove('active')
@@ -268,10 +284,17 @@ Piece.prototype.restart = function () {
     backdrop.classList.remove('backdrop')
     score = 0
     gameOver = false
+    // reset 
     board = []
     createBoard()
     drawBoard()
     p = randomPiece()
+    // reset next
+    board_Next_Piece = []
+    createBoard_Next_Piece()
+    drawBoard_Next_Piece()
+    p_next = randomPiece()
+
     dropStart = Date.now()
     drop()
   }
@@ -340,7 +363,7 @@ Piece.prototype.lock = function () {
   drawBoard()
 
   // update the score
-  scoreElement.innerHTML = score
+  scoreElement.innerHTML = score.toLocaleString('en-US')
 }
 
 // collision fucntion

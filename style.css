@@ -85,6 +85,10 @@ h4 {
   margin-bottom: 30px;
 }
 
+#score {
+  color: red;
+}
+
 .backdrop {
   width: 100%;
   position: absolute;
@@ -104,4 +108,135 @@ h4 {
 
 .hidden {
   display: none;
+}
+
+#about-play-game {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Modal */
+.modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  display: none;
+  overflow: hidden;
+  outline: 0;
+}
+
+.fade {
+  transition: opacity .15s linear;
+}
+
+.modal.in .modal-dialog {
+  transform: translate(0, 0);
+}
+
+.modal.fade .modal-dialog {
+  transform: translate(0, -25%);
+  transition: transform .3s ease-out;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    width: 600px;
+    margin: 30px auto;
+  }
+
+  .modal-content {
+    box-shadow: 0 5px 15px rgb(0 0 0 / 50%);
+  }
+}
+
+.modal-dialog {
+  position: relative;
+  top: 20%;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 6px;
+  box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+  outline: 0;
+}
+
+.modal-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-header .close {
+  margin-top: -2px;
+}
+
+button.close {
+  padding: 0;
+  cursor: pointer;
+  background: 0 0;
+  border: 0;
+  appearance: none;
+}
+
+.close {
+  float: right;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  filter: alpha(opacity=20);
+  opacity: .2;
+}
+
+.modal-title {
+  margin: 0;
+  line-height: 1.42857143;
+  color: cadetblue;
+}
+
+.modal-body {
+  position: relative;
+  padding: 15px;
+}
+
+.modal-body span.keyCode {
+  color: red;
+}
+
+.modal-body span {
+  color: cornflowerblue;
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+.modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
+}
+
+#modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  opacity: .5;
 }
