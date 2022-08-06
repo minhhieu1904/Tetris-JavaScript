@@ -2,6 +2,7 @@
 
 <head>
   <title>Tetris Game JS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel='stylesheet' href='style.css' />
 </head>
 
@@ -11,14 +12,19 @@
       <div class="container-box">
         <div class="main-control">
           <div>
-            <button id="btn-easy" onclick="changeDifficult('Easy')" type="button" class="active">Easy</button>
-            <button id="btn-normal" onclick="changeDifficult('Normal')" type="button">Normal</button>
+            <button id="btn-easy" onclick="changeDifficult('Easy')" type="button" class="active">Easy </button>
+            <button id="btn-normal" onclick="changeDifficult('Normal')" type="button">Normal </button>
             <button id="btn-hard" onclick="changeDifficult('Hard')" type="button">Hard</button>
           </div>
           <div>
-            <button id="btn-play" type="button">Play</button>
-            <button id="btn-pause" type="button">Pause</button>
-            <button id="btn-restart" type="button">Restart</button>
+            <button id="btn-play" type="button">
+              <i class="fa fa-play"></i>
+            </button>
+            <button id="btn-pause" type="button">
+              <i class="fa fa-pause"></i>
+              </button>
+            <button id="btn-restart" type="button"> <i class="fa fa-repeat"></i>
+              </button>
           </div>
         </div>
         <div class="main-play">
@@ -29,9 +35,23 @@
         <div class="info-play">
           <h4>Next Piece</h4>
           <canvas id="next_piece" width="120" height="120"></canvas>
-          <h4 style="margin-top: 1rem;">Score</h4>
+          <h4>Score</h4>
           <div id="score">0</div>
+          <div class="note">
+              <h3>How to play?</h3>
+              <ul >
+                <li><span >Enter:</span> Start game</li>
+                <li><span>Space:</span> Drop</li>
+                <li><span>Left:</span> Move left</li>
+                <li><span>Right:</span> Move Right</li>
+                <li><span>Down:</span> Move Down</li>
+                <li><span>Up:</span> Change Piece </li>
+                <li><span>Key P:</span> Pause</li>
+                <li><span>Key R:</span> Restart</li>
+              </ul>
+          </div>
         </div>
+        
       </div>
   </main>
   <div id="backdrop"></div>

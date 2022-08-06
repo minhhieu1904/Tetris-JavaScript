@@ -269,9 +269,13 @@ Piece.prototype.restart = function () {
     score = 0
     gameOver = false
     board = []
+    board_Next_Piece = []
     createBoard()
+    createBoard_Next_Piece()
     drawBoard()
+    drawBoard_Next_Piece()
     p = randomPiece()
+    p_next = randomPiece()
     dropStart = Date.now()
     drop()
   }
@@ -340,7 +344,7 @@ Piece.prototype.lock = function () {
   drawBoard()
 
   // update the score
-  scoreElement.innerHTML = score
+  scoreElement.innerHTML = score.toLocaleString('en-US')
 }
 
 // collision fucntion
